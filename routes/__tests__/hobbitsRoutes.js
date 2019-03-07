@@ -60,14 +60,12 @@ describe("Hobbits routes:", () => {
     });
 
     it("• should return status 200", done => {
-      dbHelper.insert(testHobbits).then(() => {
-        request(server)
-          .get("/hobbits/2")
-          .then(res => {
-            expect(res.status).toBe(200);
-            done();
-          });
-      });
+      request(server)
+        .get("/hobbits/2")
+        .then(res => {
+          expect(res.status).toBe(200);
+          done();
+        });
     });
 
     it("• should retrieve a specific hobbit given an ID parameter", done => {
@@ -75,7 +73,7 @@ describe("Hobbits routes:", () => {
         request(server)
           .get("/hobbits/3")
           .then(res => {
-            expect(res).toBe({ id: 3, name: "Charlie" });
+            expect(res).toBeEqual(expectedHobbits[2]);
             done();
           });
       });
@@ -83,6 +81,43 @@ describe("Hobbits routes:", () => {
   });
 
   describe(`Request to "POST /hobbits"`, () => {
+    it("• should return a JSON", done => {
+      request(server)
+        .post("/hobbits", testHobbits[0])
+        .then(res => {
+          expect(res.type).toBe("application/json");
+          done();
+        });
+    });
 
-  })
+    it("• should return status 201", done => {
+      request(server)
+        .post("/hobbits", testHobbits[0])
+        .then(res => {
+          expect(res.status).toBe(201);
+          done();
+        });
+    });
+
+    it("• should return the inserted hobbit", done => {
+      request(server)
+        .post("/hobbits", testHobbits[0])
+        .then(res => {
+          expect(res).toBeEqual(expectedHobbits[0]);
+          done();
+        });
+    });
+
+    it("• should actually insert the new hobbit into the database", done => {
+      request(server)
+        .post("/hobbits", testHobbits[0])
+        .then(() => {
+          dbHelper.get(1)
+            .then(res => {
+              expect(res).toBeEqual(expectedHobbits[0]);
+              done();
+            })
+        });
+    });
+  });
 });
