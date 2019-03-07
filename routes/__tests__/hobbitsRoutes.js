@@ -1,6 +1,8 @@
 const request = require("supertest");
 
 const server = require("../../api/server");
+const db = require("../../data/dbConfig");
+const dbHelper = require("../../data/helpers/hobbitsModel");
 
 describe("Hobbits routes:", () => {
   const testHobbits = [
@@ -18,10 +20,10 @@ describe("Hobbits routes:", () => {
     await db("hobbits").truncate();
   });
 
-  describe(`Request to "GET /hobbits":`, () => {
+  describe(`Request to "GET /api/hobbits":`, () => {
     it("• should return a JSON", done => {
       request(server)
-        .get("/hobbits")
+        .get("/api/hobbits")
         .then(res => {
           expect(res.type).toBe("application/json");
           done();
@@ -30,7 +32,7 @@ describe("Hobbits routes:", () => {
 
     it("• should return status 200", done => {
       request(server)
-        .get("/hobbits")
+        .get("/api/hobbits")
         .then(res => {
           expect(res.status).toBe(200);
           done();
@@ -44,7 +46,7 @@ describe("Hobbits routes:", () => {
         .then(() => dbHelper.insert(testHobbits[2]))
         .then(() => {
           request(server)
-            .get("/hobbits")
+            .get("/api/hobbits")
             .then(res => {
               expect(res).toBeEqual(expectedHobbits);
               done();
@@ -53,7 +55,7 @@ describe("Hobbits routes:", () => {
     });
   });
 
-  describe(`Request to "GET /hobbits/:id":`, () => {
+  describe(`Request to "GET /api/hobbits/:id":`, () => {
     it("• should return a JSON", done => {
       dbHelper
         .insert(testHobbits[0])
@@ -61,7 +63,7 @@ describe("Hobbits routes:", () => {
         .then(() => dbHelper.insert(testHobbits[2]))
         .then(() => {
           request(server)
-            .get("/hobbits/1")
+            .get("/api/hobbits/1")
             .then(res => {
               expect(res.type).toBe("application/json");
               done();
@@ -76,7 +78,7 @@ describe("Hobbits routes:", () => {
         .then(() => dbHelper.insert(testHobbits[2]))
         .then(() => {
           request(server)
-            .get("/hobbits/2")
+            .get("/api/hobbits/2")
             .then(res => {
               expect(res.status).toBe(200);
               done();
@@ -91,7 +93,7 @@ describe("Hobbits routes:", () => {
         .then(() => dbHelper.insert(testHobbits[2]))
         .then(() => {
           request(server)
-            .get("/hobbits/3")
+            .get("/api/hobbits/3")
             .then(res => {
               expect(res).toBeEqual(expectedHobbits[2]);
               done();
@@ -103,7 +105,7 @@ describe("Hobbits routes:", () => {
   describe(`Request to "POST /hobbits"`, () => {
     it("• should return a JSON", done => {
       request(server)
-        .post("/hobbits", testHobbits[0])
+        .post("/api/hobbits", testHobbits[0])
         .then(res => {
           expect(res.type).toBe("application/json");
           done();
@@ -112,7 +114,7 @@ describe("Hobbits routes:", () => {
 
     it("• should return status 201", done => {
       request(server)
-        .post("/hobbits", testHobbits[0])
+        .post("/api/hobbits", testHobbits[0])
         .then(res => {
           expect(res.status).toBe(201);
           done();
@@ -121,7 +123,7 @@ describe("Hobbits routes:", () => {
 
     it("• should return the inserted hobbit", done => {
       request(server)
-        .post("/hobbits", testHobbits[0])
+        .post("/api/hobbits", testHobbits[0])
         .then(res => {
           expect(res).toBeEqual(expectedHobbits[0]);
           done();
@@ -130,7 +132,7 @@ describe("Hobbits routes:", () => {
 
     it("• should actually insert the new hobbit into the database", done => {
       request(server)
-        .post("/hobbits", testHobbits[0])
+        .post("/api/hobbits", testHobbits[0])
         .then(() => {
           dbHelper.get(1).then(res => {
             expect(res).toBeEqual(expectedHobbits[0]);
@@ -144,7 +146,7 @@ describe("Hobbits routes:", () => {
     it("• should return a JSON", done => {
       dbHelper.insert(testHobbits[0]).then(() => {
         request(server)
-          .delete("/hobbits/1")
+          .delete("/api/hobbits/1")
           .then(res => {
             expect(res.type).toBeEqual(expectedHobbits[0]);
             done();
@@ -155,7 +157,7 @@ describe("Hobbits routes:", () => {
     it("• should return status 200", done => {
       dbHelper.insert(testHobbits[0]).then(() => {
         request(server)
-          .delete("/hobbits/1")
+          .delete("/api/hobbits/1")
           .then(res => {
             expect(res.status).toBe(200);
             done();
@@ -166,7 +168,7 @@ describe("Hobbits routes:", () => {
     it("• should return the deleted hobbit", done => {
       dbHelper.insert(testHobbits[0]).then(() => {
         request(server)
-          .delete("/hobbits/1")
+          .delete("/api/hobbits/1")
           .then(res => {
             expect(res).toBe(expectedHobbits[0]);
             done();
@@ -181,7 +183,7 @@ describe("Hobbits routes:", () => {
         .then(() => dbHelper.insert(testHobbits[2]))
         .then(() => {
           request(server)
-            .delete("/hobbits/2")
+            .delete("/api/hobbits/2")
             .then(() => {
               dbHelper.get().then(res => {
                 expect(res.length).toBeEqual([
