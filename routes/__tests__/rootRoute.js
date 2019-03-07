@@ -1,8 +1,8 @@
 const request = require("supertest");
 
-const server = require("../api/server");
+const server = require("../../api/server");
 
-describe(`Request to "GET /":`, () => {
+describe("Request to root route", () => {
   it("• should return status 200", done => {
     request(server)
       .get("/")

@@ -1,6 +1,6 @@
 const request = require("supertest");
 
-const server = require("../api/server");
+const server = require("../../api/server");
 
 describe("Bad request:", () => {
   it("• should return status 400", () => {
